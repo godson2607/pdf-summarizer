@@ -1,0 +1,30 @@
+from langchain_openai import ChatOpenAI
+from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.chains.summarize import load_summarize_chain
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Step 1: Load the PDF
+loader = PyPDFLoader("pdf  summarizer\samp;le.pdf")# Absolute path
+pages = loader.load()
+
+# Step 2: Split text into chunks
+splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+docs = splitter.split_documents(pages)
+
+# Step 3: Initialize the language model
+llm = ChatOpenAI(model="gpt-4o")
+
+# Step 4: Load summarization chain
+chain = load_summarize_chain(llm, chain_type="map_reduce")
+
+# Step 5: Run the summarization
+summary = chain.run(docs)
+
+# Step 6: Output the summary
+print("\n📄 Summary:\n")
+print(summary)
